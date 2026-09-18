@@ -73,42 +73,21 @@
             background: linear-gradient(135deg, #e17055, #d63031);
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
             position: relative;
+            transition: none;
         }
-        .btn-no:hover {
-            transform: scale(1.1);
+        .btn-no.moving {
+            transition: transform 0.2s ease;
         }
-        .btn-no.broken {
-            animation: breakBtn 0.5s ease forwards;
+        .btn-no.shrink {
+            animation: shrinkNo 0.5s ease forwards;
             pointer-events: none;
         }
-        @keyframes breakBtn {
-            0% { transform: scale(1) rotate(0); opacity: 1; }
-            25% { transform: scale(1.2) rotate(-5deg); }
-            50% { transform: scale(0.9) rotate(5deg); }
-            75% { transform: scale(1.1) rotate(-3deg); opacity: 0.5; }
-            100% {
-                transform: scale(0) rotate(20deg);
-                opacity: 0;
-                filter: blur(4px);
-            }
-        }
-        .crack {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-        }
-        .shatter-piece {
-            position: absolute;
-            background: linear-gradient(135deg, #e17055, #d63031);
-            border-radius: 4px;
-            animation: flyAway 0.6s ease forwards;
-        }
-        @keyframes flyAway {
-            0% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
-            100% { opacity: 0; }
+        @keyframes shrinkNo {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
         .no-text {
             font-size: 14px;
@@ -193,9 +172,9 @@
         <p>Will you go for coffee with me? 🥺</p>
         <div class="btn-group">
             <button class="btn-yes" id="yesBtn" onclick="sayYes()">Yes</button>
-            <button class="btn-no" id="noBtn" onmouseenter="breakNo()" onclick="breakNo()">No</button>
+            <button class="btn-no" id="noBtn">No</button>
         </div>
-        <p class="no-text" id="noText">😂 Arey, there was no No option anyway!</p>
+        <p class="no-text" id="noText">😂 You tried so hard! There was no escape!</p>
     </div>
 
     <div class="dance-screen" id="danceScreen">
@@ -205,42 +184,41 @@
     </div>
 
     <script>
-        let noBroken = false;
+        const noBtn = document.getElementById('noBtn');
+        let dodgeCount = 0;
+        const maxDodges = 5;
+        let isShrunk = false;
 
-        function breakNo() {
-            if (noBroken) return;
-            noBroken = true;
+        noBtn.addEventListener('mouseenter', dodgeNo);
+        noBtn.addEventListener('click', dodgeNo);
 
-            const btn = document.getElementById('noBtn');
-            const rect = btn.getBoundingClientRect();
+        function dodgeNo() {
+            if (isShrunk) return;
+            dodgeCount++;
+
+            const btn = noBtn;
             const card = document.getElementById('mainCard');
             const cardRect = card.getBoundingClientRect();
 
-            for (let i = 0; i < 12; i++) {
-                const piece = document.createElement('div');
-                piece.className = 'shatter-piece';
-                piece.style.width = (Math.random() * 20 + 10) + 'px';
-                piece.style.height = (Math.random() * 20 + 10) + 'px';
-                piece.style.left = (rect.left - cardRect.left + Math.random() * rect.width) + 'px';
-                piece.style.top = (rect.top - cardRect.top + Math.random() * rect.height) + 'px';
-                const angle = Math.random() * 360;
-                const dist = Math.random() * 150 + 50;
-                piece.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-                piece.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-                piece.style.animation = `flyAway 0.6s ease forwards`;
-                piece.animate([
-                    { transform: 'translate(0,0) rotate(0) scale(1)', opacity: 1 },
-                    { transform: `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) rotate(${Math.random()*360}deg) scale(0)`, opacity: 0 }
-                ], { duration: 600, easing: 'ease-out', fill: 'forwards' });
-                card.appendChild(piece);
+            const maxX = (cardRect.width / 2) - (btn.offsetWidth / 2) - 10;
+            const maxY = (cardRect.height / 2) - (btn.offsetHeight / 2) - 10;
+
+            const randomX = (Math.random() * maxX * 2) - maxX;
+            const randomY = (Math.random() * maxY * 2) - maxY;
+
+            btn.classList.remove('moving');
+            void btn.offsetWidth;
+            btn.classList.add('moving');
+            btn.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${(Math.random()-0.5)*20}deg)`;
+
+            if (dodgeCount >= maxDodges) {
+                isShrunk = true;
+                setTimeout(() => {
+                    btn.classList.add('shrink');
+                    document.getElementById('noText').classList.add('show');
+                    setTimeout(() => { btn.style.display = 'none'; }, 500);
+                }, 300);
             }
-
-            btn.classList.add('broken');
-            document.getElementById('noText').classList.add('show');
-
-            setTimeout(() => {
-                btn.style.display = 'none';
-            }, 600);
         }
 
         function sayYes() {
