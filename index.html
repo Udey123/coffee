@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Date?</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff6b9d, #c44569, #ff6b9d);
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+        .card {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: popIn 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .card h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .card p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .card .emoji {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-yes {
+            padding: 14px 50px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 206, 201, 0.5);
+        }
+        .btn-no {
+            padding: 14px 50px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #e17055, #d63031);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            position: relative;
+        }
+        .btn-no:hover {
+            transform: scale(1.1);
+        }
+        .btn-no.broken {
+            animation: breakBtn 0.5s ease forwards;
+            pointer-events: none;
+        }
+        @keyframes breakBtn {
+            0% { transform: scale(1) rotate(0); opacity: 1; }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(0.9) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-3deg); opacity: 0.5; }
+            100% {
+                transform: scale(0) rotate(20deg);
+                opacity: 0;
+                filter: blur(4px);
+            }
+        }
+        .crack {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+        }
+        .shatter-piece {
+            position: absolute;
+            background: linear-gradient(135deg, #e17055, #d63031);
+            border-radius: 4px;
+            animation: flyAway 0.6s ease forwards;
+        }
+        @keyframes flyAway {
+            0% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .no-text {
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+            display: none;
+        }
+        .no-text.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        .dance-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .dance-screen.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        .dance-text {
+            font-size: 36px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: bounce 0.5s ease infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+        .dance-gif {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 150px;
+            animation: danceMove 0.8s ease infinite alternate;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        @keyframes danceMove {
+            0% { transform: rotate(-15deg) scale(1); }
+            25% { transform: rotate(10deg) scale(1.05); }
+            50% { transform: rotate(-10deg) scale(0.95); }
+            75% { transform: rotate(15deg) scale(1.05); }
+            100% { transform: rotate(-15deg) scale(1); }
+        }
+        .dance-sub {
+            color: white;
+            font-size: 18px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall linear forwards;
+            z-index: 101;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="mainCard">
+        <div class="emoji">☕</div>
+        <h1>Hey Shreyaa!</h1>
+        <p>Will you go for coffee with me? 🥺</p>
+        <div class="btn-group">
+            <button class="btn-yes" id="yesBtn" onclick="sayYes()">Yes</button>
+            <button class="btn-no" id="noBtn" onmouseenter="breakNo()" onclick="breakNo()">No</button>
+        </div>
+        <p class="no-text" id="noText">😂 Arey, there was no No option anyway!</p>
+    </div>
+
+    <div class="dance-screen" id="danceScreen">
+        <div class="dance-text">YAY! See you at coffee! ☕🎉</div>
+        <div class="dance-gif">🕺</div>
+        <div class="dance-sub">Let's go! Time to dance! 💃</div>
+    </div>
+
+    <script>
+        let noBroken = false;
+
+        function breakNo() {
+            if (noBroken) return;
+            noBroken = true;
+
+            const btn = document.getElementById('noBtn');
+            const rect = btn.getBoundingClientRect();
+            const card = document.getElementById('mainCard');
+            const cardRect = card.getBoundingClientRect();
+
+            for (let i = 0; i < 12; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'shatter-piece';
+                piece.style.width = (Math.random() * 20 + 10) + 'px';
+                piece.style.height = (Math.random() * 20 + 10) + 'px';
+                piece.style.left = (rect.left - cardRect.left + Math.random() * rect.width) + 'px';
+                piece.style.top = (rect.top - cardRect.top + Math.random() * rect.height) + 'px';
+                const angle = Math.random() * 360;
+                const dist = Math.random() * 150 + 50;
+                piece.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                piece.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                piece.style.animation = `flyAway 0.6s ease forwards`;
+                piece.animate([
+                    { transform: 'translate(0,0) rotate(0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) rotate(${Math.random()*360}deg) scale(0)`, opacity: 0 }
+                ], { duration: 600, easing: 'ease-out', fill: 'forwards' });
+                card.appendChild(piece);
+            }
+
+            btn.classList.add('broken');
+            document.getElementById('noText').classList.add('show');
+
+            setTimeout(() => {
+                btn.style.display = 'none';
+            }, 600);
+        }
+
+        function sayYes() {
+            const screen = document.getElementById('danceScreen');
+            screen.classList.add('show');
+            document.getElementById('mainCard').style.display = 'none';
+
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#01a3a4'];
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
